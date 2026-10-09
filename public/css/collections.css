@@ -1,0 +1,358 @@
+.collections-banner {
+    background: #17352f;
+    padding: 70px 0;
+    text-align: center;
+}
+
+.collections-banner-content {
+    color: #fff;
+}
+
+.breadcrumb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #b18a4b;
+    text-decoration: none;
+}
+
+.breadcrumb span {
+    color: #ddd;
+}
+.breadcrumb a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.breadcrumb .active {
+    color: #c49a55;
+}
+
+
+.collections-banner h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.collections-banner p {
+    margin: 12px 0 0;
+    color: #ddd;
+    font-size: 15px;
+}
+
+.collections-section {
+    padding: 75px 0;
+    background: #faf9f6;
+}
+
+.collections-heading {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 50px;
+}
+
+.collections-heading span {
+    display: block;
+    color: #b18a4b;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.collections-heading h2 {
+    color: #17140f;
+    font-size: 34px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.collections-heading p {
+    color: #777;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.collection-card {
+    background: #fff;
+    border: 1px solid #eee;
+    height: 100%;
+    overflow: hidden;
+    transition: 0.3s ease;
+}
+
+.collection-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.collection-image {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    background: #f3f0ea;
+}
+
+.collection-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.collection-card:hover .collection-image img {
+    transform: scale(1.06);
+}
+
+.collection-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b18a4b;
+    font-size: 55px;
+}
+
+.collection-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(23, 20, 15, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+.collection-card:hover .collection-overlay {
+    opacity: 1;
+}
+
+.collection-btn {
+    display: inline-block;
+    background: #b18a4b;
+    color: #fff;
+    padding: 12px 18px;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 1px;
+    transition: 0.3s ease;
+}
+
+.collection-btn:hover {
+    background: #fff;
+    color: #17140f;
+}
+
+.collection-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.collection-info h3 {
+    color: #17140f;
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0 0 12px;
+}
+
+.collection-info a {
+    color: #b18a4b;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.collection-info a i {
+    margin-left: 6px;
+    transition: 0.3s ease;
+}
+
+.collection-info a:hover {
+    color: #17140f;
+}
+
+.collection-info a:hover i {
+    margin-left: 10px;
+}
+
+.no-collections {
+    background: #fff;
+    border: 1px solid #eee;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.no-collections-icon {
+    color: #b18a4b;
+    font-size: 55px;
+    margin-bottom: 20px;
+}
+
+.no-collections h2 {
+    color: #17140f;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.no-collections p {
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.no-collections a {
+    display: inline-block;
+    background: #17140f;
+    color: #fff;
+    padding: 13px 25px;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.no-collections a:hover {
+    background: #b18a4b;
+    color: #fff;
+}
+
+.collections-bottom {
+    padding: 80px 0;
+    background: #17140f;
+    text-align: center;
+}
+
+.collections-bottom-content {
+    max-width: 700px;
+    margin: 0 auto;
+    color: #fff;
+}
+
+.collections-bottom-content > span {
+    display: block;
+    color: #b18a4b;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.collections-bottom-content h2 {
+    font-size: 34px;
+    font-weight: 500;
+    margin: 0 0 15px;
+}
+
+.collections-bottom-content p {
+    color: #ddd;
+    font-size: 15px;
+    margin-bottom: 28px;
+}
+
+.collections-bottom-content a {
+    display: inline-block;
+    background: #b18a4b;
+    color: #fff;
+    padding: 14px 25px;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: 0.3s ease;
+}
+
+.collections-bottom-content a:hover {
+    background: #fff;
+    color: #17140f;
+}
+
+@media (max-width: 991px) {
+    .collections-section {
+        padding: 60px 0;
+    }
+
+    .collection-image {
+        height: 270px;
+    }
+
+    .collection-overlay {
+        opacity: 1;
+        background: linear-gradient(
+            to top,
+            rgba(23, 20, 15, 0.65),
+            transparent
+        );
+        align-items: flex-end;
+        padding-bottom: 15px;
+    }
+}
+
+@media (max-width: 767px) {
+    .collections-banner {
+        padding: 50px 0;
+    }
+
+    .collections-banner h1 {
+        font-size: 32px;
+    }
+
+    .collections-banner p {
+        font-size: 14px;
+    }
+
+    .collections-section {
+        padding: 45px 0;
+    }
+
+    .collections-heading {
+        margin-bottom: 35px;
+    }
+
+    .collections-heading h2 {
+        font-size: 28px;
+    }
+
+    .collections-heading p {
+        font-size: 14px;
+    }
+
+    .collection-image {
+        height: 220px;
+    }
+
+    .collection-info {
+        padding: 15px 10px;
+    }
+
+    .collection-info h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .collection-btn {
+        padding: 10px 12px;
+        font-size: 9px;
+    }
+
+    .collections-bottom {
+        padding: 55px 20px;
+    }
+
+    .collections-bottom-content h2 {
+        font-size: 27px;
+    }
+
+    .collections-bottom-content p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
