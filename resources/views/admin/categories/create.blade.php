@@ -3,531 +3,285 @@
 @section('title', 'Create Category')
 
 @push('styles')
-<link rel="stylesheet" href="{{ secure_asset('css/admin/categories-create.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/admin/categories-create.css') }}">
 @endpush
 
 @section('content')
-
-<div class="category-create-page">
-
-    <div class="page-header">
-
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <span class="page-label">STORE MANAGEMENT</span>
-
-            <h1>Create Category</h1>
-
-            <p>Add a new jewellery category to your store</p>
+            <h1 class="h3 mb-1">Create Category</h1>
+            <p class="text-muted mb-0">Add a new product category.</p>
         </div>
 
-        <a
-            href="{{ route('admin.categories.index') }}"
-            class="back-btn"
-        >
-            <i class="fa-solid fa-arrow-left"></i>
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
             Back to Categories
         </a>
-
     </div>
 
-
-    @if($errors->any())
-
-        <div class="validation-alert">
-
-            <div class="alert-icon">
-                <i class="fa-solid fa-circle-exclamation"></i>
-            </div>
-
-            <div>
-
-                <strong>Please fix the following errors:</strong>
-
-                <ul>
-
-                    @foreach($errors->all() as $error)
-
-                        <li>{{ $error }}</li>
-
-                    @endforeach
-
-                </ul>
-
-            </div>
-
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-
     @endif
 
-
-    <div class="category-layout">
-
-
-        <div class="category-form-card">
-
-            <div class="card-heading">
-
-                <div class="heading-icon">
-                    <i class="fa-solid fa-layer-group"></i>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Category Details</h5>
                 </div>
 
-                <div>
-
-                    <h2>Category Information</h2>
-
-                    <p>
-                        Enter the details for your new jewellery category
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <form
-                action="{{ route('admin.categories.store',[],false) }}"
-                method="POST"
-                enctype="multipart/form-data"
-            >
-
-                @csrf
-
-
-                <div class="form-group">
-
-                    <label for="name">
-                        Category Name
-                        <span>*</span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value="{{ old('name') }}"
-                        placeholder="Enter category name"
-                        required
+                <div class="card-body">
+                    <form
+                        action="{{ route('admin.categories.store', [], false) }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        id="categoryForm"
                     >
+                        @csrf
 
-                    <small>
-                        Example: Rings, Necklaces, Earrings
-                    </small>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Category Name <span class="text-danger">*</span>
+                            </label>
 
-                </div>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                class="form-control"
+                                value="{{ old('name') }}"
+                                placeholder="Enter category name"
+                                maxlength="255"
+                                required
+                            >
 
-
-                <div class="form-group">
-
-                    <label for="image">
-                        Category Image
-                    </label>
-
-                    <div class="image-upload-box">
-
-                        <div class="upload-icon">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                        </div>
-
-                        <div class="upload-content">
-
-                            <strong>
-                                Upload Category Image
-                            </strong>
-
-                            <span>
-                                JPG, JPEG, PNG or WEBP
-                            </span>
-
-                            <small>
-                                Maximum file size: 2MB
+                            <small class="text-muted">
+                                Example: Rings, Necklaces, Earrings
                             </small>
-
                         </div>
 
-                        <label
-                            for="image"
-                            class="choose-image-btn"
-                        >
-                            Choose Image
-                        </label>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">
+                                Category Image
+                            </label>
 
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            accept="image/jpeg,image/png,image/webp"
-                        >
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                class="form-control"
+                                accept="image/jpeg,image/png,image/webp,image/jpg"
+                            >
 
-                    </div>
+                            <small class="text-muted">
+                                Select a JPG, JPEG, PNG, or WEBP image.
+                                Maximum size depends on your controller validation.
+                            </small>
+                        </div>
 
+                        <div class="mb-3" id="imagePreviewWrapper" style="display: none;">
+                            <label class="form-label">Selected Image</label>
 
-                    <div
-                        class="image-preview-wrapper"
-                        id="imagePreviewWrapper"
-                    >
+                            <div>
+                                <img
+                                    id="imagePreview"
+                                    src=""
+                                    alt="Category image preview"
+                                    style="max-width: 180px; max-height: 180px; object-fit: contain;"
+                                    class="img-thumbnail"
+                                >
+                            </div>
 
-                        <img
-                            id="imagePreview"
-                            src=""
-                            alt="Category Preview"
-                        >
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger mt-2"
+                                id="removeImage"
+                            >
+                                <i class="fas fa-times me-1"></i>
+                                Remove Image
+                            </button>
+                        </div>
 
-                        <button
-                            type="button"
-                            id="removeImage"
-                            class="remove-image-btn"
-                        >
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                        <div class="mb-4">
+                            <label for="status" class="form-label">
+                                Status <span class="text-danger">*</span>
+                            </label>
 
-                    </div>
+                            <select
+                                id="status"
+                                name="status"
+                                class="form-select"
+                                required
+                            >
+                                <option
+                                    value="1"
+                                    {{ old('status', '1') == '1' ? 'selected' : '' }}
+                                >
+                                    Active
+                                </option>
 
+                                <option
+                                    value="0"
+                                    {{ old('status', '1') == '0' ? 'selected' : '' }}
+                                >
+                                    Inactive
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                Create Category
+                            </button>
+
+                            <a
+                                href="{{ route('admin.categories.index') }}"
+                                class="btn btn-light border"
+                            >
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Category Preview</h5>
                 </div>
 
-
-                <div class="form-group">
-
-                    <label for="status">
-
-                        Status
-
-                        <span>*</span>
-
-                    </label>
-
-                    <select
-                        id="status"
-                        name="status"
-                        required
-                    >
-
-                        <option value="1"
-                            {{ old('status', 1) == 1 ? 'selected' : '' }}
+                <div class="card-body">
+                    <div class="text-center">
+                        <div
+                            id="categoryPreviewImage"
+                            class="mb-3"
+                            style="min-height: 180px; display: flex; align-items: center; justify-content: center;"
                         >
+                            <div id="previewImagePlaceholder" class="text-muted">
+                                <i class="fas fa-image fa-4x mb-2"></i>
+                                <p class="mb-0">Your image preview will appear here.</p>
+                            </div>
+                        </div>
+
+                        <h5 id="categoryNamePreview" class="mb-2">
+                            Category Name
+                        </h5>
+
+                        <span id="categoryStatusPreview" class="badge bg-success">
                             Active
-                        </option>
-
-                        <option value="0"
-                            {{ old('status') == 0 ? 'selected' : '' }}
-                        >
-                            Inactive
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="category-info-box">
-
-                    <div class="info-icon">
-
-                        <i class="fa-solid fa-circle-info"></i>
-
+                        </span>
                     </div>
-
-                    <div>
-
-                        <strong>
-                            Category Details
-                        </strong>
-
-                        <p>
-                            A unique slug will be automatically created
-                            from the category name.
-                        </p>
-
-                        <p>
-                            You can change the category status anytime
-                            from the edit page.
-                        </p>
-
-                    </div>
-
                 </div>
-
-
-                <div class="form-actions">
-
-                    <a
-                        href="{{ route('admin.categories.index') }}"
-                        class="cancel-btn"
-                    >
-                        Cancel
-                    </a>
-
-                    <button
-                        type="submit"
-                        class="create-btn"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        Create Category
-                    </button>
-
-                </div>
-
-            </form>
-
+            </div>
         </div>
-
-
-        <div class="category-preview-card">
-
-            <div class="preview-heading">
-
-                <h2>Category Preview</h2>
-
-                <p>
-                    Preview how your category information looks
-                </p>
-
-            </div>
-
-
-            <div class="category-preview-image">
-
-                <div
-                    class="preview-image-placeholder"
-                    id="previewImagePlaceholder"
-                >
-
-                    <i class="fa-solid fa-gem"></i>
-
-                </div>
-
-                <img
-                    src=""
-                    alt="Category Preview"
-                    id="categoryPreviewImage"
-                >
-
-            </div>
-
-
-            <div class="category-preview">
-
-                <div class="preview-icon">
-
-                    <i class="fa-solid fa-layer-group"></i>
-
-                </div>
-
-
-                <div class="preview-details">
-
-                    <span class="preview-label">
-                        CATEGORY
-                    </span>
-
-                    <h3 id="categoryPreviewName">
-                        Category Name
-                    </h3>
-
-                    <span
-                        class="preview-status active"
-                        id="categoryPreviewStatus"
-                    >
-
-                        <i class="fa-solid fa-circle"></i>
-
-                        Active
-
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="preview-divider"></div>
-
-
-            <div class="category-stat">
-
-                <div class="stat-icon">
-
-                    <i class="fa-solid fa-box-open"></i>
-
-                </div>
-
-                <div>
-
-                    <strong>
-                        0
-                    </strong>
-
-                    <span>
-                        Products
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="preview-divider"></div>
-
-
-            <div class="category-stat">
-
-                <div class="stat-icon">
-
-                    <i class="fa-solid fa-plus"></i>
-
-                </div>
-
-                <div>
-
-                    <strong>
-                        New
-                    </strong>
-
-                    <span>
-                        Category
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
-
 </div>
-
 @endsection
 
-
 @push('scripts')
-
 <script>
-
 document.addEventListener('DOMContentLoaded', function () {
+    const categoryForm = document.getElementById('categoryForm');
+    const nameInput = document.getElementById('name');
+    const imageInput = document.getElementById('image');
+    const statusInput = document.getElementById('status');
 
-    const nameInput =
-        document.getElementById('name');
+    const imagePreviewWrapper = document.getElementById('imagePreviewWrapper');
+    const imagePreview = document.getElementById('imagePreview');
+    const removeImageButton = document.getElementById('removeImage');
 
-    const statusInput =
-        document.getElementById('status');
+    const categoryNamePreview = document.getElementById('categoryNamePreview');
+    const categoryStatusPreview = document.getElementById('categoryStatusPreview');
+    const categoryPreviewImage = document.getElementById('categoryPreviewImage');
 
-    const imageInput =
-        document.getElementById('image');
-
-    const previewName =
-        document.getElementById('categoryPreviewName');
-
-    const previewStatus =
-        document.getElementById('categoryPreviewStatus');
-
-    const imagePreviewWrapper =
-        document.getElementById('imagePreviewWrapper');
-
-    const imagePreview =
-        document.getElementById('imagePreview');
-
-    const categoryPreviewImage =
-        document.getElementById('categoryPreviewImage');
-
-    const previewImagePlaceholder =
-        document.getElementById('previewImagePlaceholder');
-
-    const removeImage =
-        document.getElementById('removeImage');
-
+    const previewImagePlaceholder = document.getElementById('previewImagePlaceholder');
 
     nameInput.addEventListener('input', function () {
-
-        previewName.textContent =
-            this.value.trim() || 'Category Name';
-
+        categoryNamePreview.textContent = this.value.trim() || 'Category Name';
     });
-
 
     statusInput.addEventListener('change', function () {
-
         if (this.value === '1') {
-
-            previewStatus.className =
-                'preview-status active';
-
-            previewStatus.innerHTML =
-                '<i class="fa-solid fa-circle"></i> Active';
-
+            categoryStatusPreview.textContent = 'Active';
+            categoryStatusPreview.className = 'badge bg-success';
         } else {
-
-            previewStatus.className =
-                'preview-status inactive';
-
-            previewStatus.innerHTML =
-                '<i class="fa-solid fa-circle"></i> Inactive';
-
+            categoryStatusPreview.textContent = 'Inactive';
+            categoryStatusPreview.className = 'badge bg-secondary';
         }
-
     });
 
-
     imageInput.addEventListener('change', function () {
-
-        const file = this.files[0];
+        const file = this.files && this.files[0];
 
         if (!file) {
             return;
         }
 
         if (!file.type.startsWith('image/')) {
-
-            alert('Please select a valid image.');
-
-            imageInput.value = '';
-
+            alert('Please select a valid image file.');
+            this.value = '';
             return;
         }
 
-
         const reader = new FileReader();
 
-
         reader.onload = function (event) {
+            imagePreview.src = event.target.result;
+            imagePreviewWrapper.style.display = 'block';
 
-            imagePreview.src =
-                event.target.result;
+            previewImagePlaceholder.style.display = 'none';
 
-            categoryPreviewImage.src =
-                event.target.result;
+            let existingPreview = categoryPreviewImage.querySelector('img');
 
-            imagePreviewWrapper.classList.add('show');
+            if (!existingPreview) {
+                existingPreview = document.createElement('img');
+                existingPreview.alt = 'Category preview';
+                existingPreview.style.maxWidth = '100%';
+                existingPreview.style.maxHeight = '180px';
+                existingPreview.style.objectFit = 'contain';
+                existingPreview.className = 'img-fluid rounded';
 
-            categoryPreviewImage.classList.add('show');
+                categoryPreviewImage.appendChild(existingPreview);
+            }
 
-            previewImagePlaceholder.classList.add('hide');
-
+            existingPreview.src = event.target.result;
         };
 
-
         reader.readAsDataURL(file);
-
     });
 
-
-    removeImage.addEventListener('click', function () {
-
+    removeImageButton.addEventListener('click', function () {
         imageInput.value = '';
-
         imagePreview.src = '';
+        imagePreviewWrapper.style.display = 'none';
 
-        categoryPreviewImage.src = '';
+        const existingPreview = categoryPreviewImage.querySelector('img');
 
-        imagePreviewWrapper.classList.remove('show');
+        if (existingPreview) {
+            existingPreview.remove();
+        }
 
-        categoryPreviewImage.classList.remove('show');
-
-        previewImagePlaceholder.classList.remove('hide');
-
+        previewImagePlaceholder.style.display = 'block';
     });
 
+    categoryForm.addEventListener('submit', function (event) {
+        if (!nameInput.value.trim()) {
+            event.preventDefault();
+            alert('Please enter a category name.');
+            nameInput.focus();
+        }
+    });
 });
-
 </script>
-
 @endpush

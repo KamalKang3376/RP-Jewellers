@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -23,36 +24,48 @@ class CategoryController extends Controller
         return view('admin.categories.create');
     }
 
-   public function store(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255|unique:categories,name',
-        'status' => 'required|boolean',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
 
-    $validated['slug'] = Str::slug($request->name);
+        $validated['slug'] = Str::slug($validated['name']);
 
-    if ($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
 
-        $image = $request->file('image');
+            $imageName = time() . '_' . Str::slug(
+                pathinfo(
+                    $image->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                )
+            ) . '.' . $image->getClientOriginalExtension();
 
-        $imageName = time() . '_' . $image->getClientOriginalName();
+            $path = $image->storeAs(
+                'categories',
+                $imageName,
+                'public'
+            );
 
-        $image->move(
-            public_path('images/categories'),
-            $imageName
-        );
+            if (!$path) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Unable to upload category image. Please try again.');
+            }
 
-        $validated['image'] = $imageName;
+            $validated['image'] = $imageName;
+        }
+
+        Category::create($validated);
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category added successfully.');
     }
 
-    Category::create($validated);
-
-    return redirect()
-        ->route('admin.categories.index')
-        ->with('success', 'Category added successfully.');
-}
     public function show(Category $category)
     {
         $category->load('products');
@@ -67,41 +80,63 @@ class CategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-   public function update(Request $request, Category $category)
-{
-    $validated = $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-            'unique:categories,name,' . $category->id,
-        ],
-        'status' => 'required|boolean',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-    ]);
+    public function update(Request $request, Category $category)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:categories,name,' . $category->id,
+            ],
+            'status' => 'required|boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
 
-    $validated['slug'] = Str::slug($request->name);
+        $validated['slug'] = Str::slug($validated['name']);
 
-    if ($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
 
-        $image = $request->file('image');
+            $imageName = time() . '_' . Str::slug(
+                pathinfo(
+                    $image->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                )
+            ) . '.' . $image->getClientOriginalExtension();
 
-        $imageName = time() . '_' . $image->getClientOriginalName();
+            $path = $image->storeAs(
+                'categories',
+                $imageName,
+                'public'
+            );
 
-        $image->move(
-            public_path('images/categories'),
-            $imageName
-        );
+            if (!$path) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Unable to upload category image. Please try again.');
+            }
 
-        $validated['image'] = $imageName;
+            $oldImage = $category->image;
+            $validated['image'] = $imageName;
+
+            $category->update($validated);
+
+            if ($oldImage) {
+                Storage::disk('public')->delete('categories/' . $oldImage);
+            }
+
+            return redirect()
+                ->route('admin.categories.index')
+                ->with('success', 'Category updated successfully.');
+        }
+
+        $category->update($validated);
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category updated successfully.');
     }
-
-    $category->update($validated);
-
-    return redirect()
-        ->route('admin.categories.index')
-        ->with('success', 'Category updated successfully.');
-}
 
     public function destroy(Category $category)
     {
@@ -111,12 +146,16 @@ class CategoryController extends Controller
                 ->with('error', 'This category cannot be deleted because it has products.');
         }
 
+        if ($category->image) {
+            Storage::disk('public')->delete(
+                'categories/' . $category->image
+            );
+        }
+
         $category->delete();
 
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');
     }
-
-    
 }
