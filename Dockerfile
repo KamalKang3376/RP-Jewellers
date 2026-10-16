@@ -22,3 +22,50 @@ RUN apt-get update && apt-get install -y \
     intl \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-interaction
+
+RUN apt-get update && apt-get install -y nodejs npm \
+    && npm install \
+    && npm run build \
+    && rm -rf node_modules \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN printf '%s\n' \
+    '<VirtualHost *:10000>' \
+    '    DocumentRoot /var/www/html/public' \
+    '    <Directory /var/www/html/public>' \
+    '        AllowOverride All' \
+    '        Require all granted' \
+    '    </Directory>' \
+    '    ErrorLog /proc/self/fd/2' \
+    '    CustomLog /proc/self/fd/1 combined' \
+    '</VirtualHost>' \
+    > /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's/^Listen 80$/Listen 10000/' /etc/apache2/ports.conf \
+    && echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R ug+rwx storage bootstrap/cache
+
+RUN php artisan storage:link
+
+EXPOSE 10000
+
+CMD ["apache2-foreground"]
