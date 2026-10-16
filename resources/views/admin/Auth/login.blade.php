@@ -22,7 +22,7 @@
     <!-- Admin Login CSS -->
     <link
         rel="stylesheet"
-        href="{{ asset('css/admin/login.css') }}"
+        href="{{ secure_asset('css/admin/login.css') }}"
     >
 
 </head>
