@@ -4,7 +4,7 @@
 
 @section('content')
 
-<link rel="stylesheet" href="{{ asset('css/admin/categories-edit.css') }}">
+<link rel="stylesheet" href="{{ secure_asset('css/admin/categories-edit.css') }}">
 
 <div class="category-edit-page">
 

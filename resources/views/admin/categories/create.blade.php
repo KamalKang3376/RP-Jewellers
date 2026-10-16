@@ -3,7 +3,7 @@
 @section('title', 'Create Category')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/categories-create.css') }}">
+<link rel="stylesheet" href="{{ secure_asset('css/admin/categories-create.css') }}">
 @endpush
 
 @section('content')

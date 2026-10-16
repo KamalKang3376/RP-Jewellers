@@ -23,15 +23,15 @@
 
     <link
         rel="stylesheet"
-        href="{{ asset('css/admin/layout.css') }}"
+        href="{{ secure_asset('css/admin/layout.css') }}"
 
     >
     <link
     rel="stylesheet"
-    href="{{ asset('css/admin/sidebar.css') }}"
+    href="{{ secure_asset('css/admin/sidebar.css') }}"
 
 >
-<link rel="stylesheet" href="{{ asset('css/admin/customers.css') }}">
+<link rel="stylesheet" href="{{ secure_asset('css/admin/customers.css') }}">
 
     @stack('styles')
 

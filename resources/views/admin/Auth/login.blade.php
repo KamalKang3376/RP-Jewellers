@@ -79,10 +79,8 @@
         @endif
 
         <!-- Login Form -->
-        <form
-            action="{{ route('admin.login.submit') }}"
-            method="POST"
-        >
+       <form action="{{ route('admin.login.submit', [], false) }}" method="POST">
+    
 
             @csrf
 
