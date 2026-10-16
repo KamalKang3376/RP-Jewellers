@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
@@ -11,9 +12,8 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-
             [
-                'category_id' => 1,
+                'category' => 'Rings',
                 'name' => 'Diamond Solitaire Ring',
                 'price' => 24999,
                 'discount_price' => 21999,
@@ -21,9 +21,8 @@ class ProductSeeder extends Seeder
                 'image' => 'diamond-ring.jpg',
                 'stock' => 10,
             ],
-
             [
-                'category_id' => 1,
+                'category' => 'Rings',
                 'name' => 'Classic Gold Ring',
                 'price' => 18999,
                 'discount_price' => 16999,
@@ -31,9 +30,8 @@ class ProductSeeder extends Seeder
                 'image' => 'gold-ring.jpg',
                 'stock' => 15,
             ],
-
             [
-                'category_id' => 2,
+                'category' => 'Necklaces',
                 'name' => 'Emerald Necklace',
                 'price' => 42999,
                 'discount_price' => 39999,
@@ -41,9 +39,8 @@ class ProductSeeder extends Seeder
                 'image' => 'emerald-necklace.jpg',
                 'stock' => 8,
             ],
-
             [
-                'category_id' => 2,
+                'category' => 'Necklaces',
                 'name' => 'Pearl Necklace',
                 'price' => 29999,
                 'discount_price' => 26999,
@@ -51,9 +48,8 @@ class ProductSeeder extends Seeder
                 'image' => 'pearl-necklace.jpg',
                 'stock' => 12,
             ],
-
             [
-                'category_id' => 3,
+                'category' => 'Earrings',
                 'name' => 'Diamond Earrings',
                 'price' => 22999,
                 'discount_price' => 19999,
@@ -61,9 +57,8 @@ class ProductSeeder extends Seeder
                 'image' => 'diamond-earrings.jpg',
                 'stock' => 10,
             ],
-
             [
-                'category_id' => 3,
+                'category' => 'Earrings',
                 'name' => 'Gold Earrings',
                 'price' => 15999,
                 'discount_price' => 13999,
@@ -71,9 +66,8 @@ class ProductSeeder extends Seeder
                 'image' => 'gold-earrings.jpg',
                 'stock' => 20,
             ],
-
             [
-                'category_id' => 4,
+                'category' => 'Bracelets',
                 'name' => 'Gold Bracelet',
                 'price' => 34999,
                 'discount_price' => 31999,
@@ -81,9 +75,8 @@ class ProductSeeder extends Seeder
                 'image' => 'gold-bracelet.jpg',
                 'stock' => 7,
             ],
-
             [
-                'category_id' => 5,
+                'category' => 'Pendants',
                 'name' => 'Diamond Pendant',
                 'price' => 19999,
                 'discount_price' => 17999,
@@ -91,9 +84,8 @@ class ProductSeeder extends Seeder
                 'image' => 'diamond-pendant.jpg',
                 'stock' => 14,
             ],
-
             [
-                'category_id' => 6,
+                'category' => 'Bangles',
                 'name' => 'Traditional Gold Bangles',
                 'price' => 38999,
                 'discount_price' => 35999,
@@ -103,18 +95,28 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
-            Product::create([
-                'category_id' => $product['category_id'],
-                'name' => $product['name'],
-                'slug' => Str::slug($product['name']),
-                'description' => $product['description'],
-                'price' => $product['price'],
-                'discount_price' => $product['discount_price'],
-                'image' => $product['image'],
-                'stock' => $product['stock'],
-                'status' => 1,
-            ]);
+        foreach ($products as $data) {
+            $category = Category::where('name', $data['category'])->first();
+
+            if (!$category) {
+                throw new \RuntimeException(
+                    'Category not found: ' . $data['category']
+                );
+            }
+
+            Product::updateOrCreate(
+                ['slug' => Str::slug($data['name'])],
+                [
+                    'category_id' => $category->id,
+                    'name' => $data['name'],
+                    'description' => $data['description'],
+                    'price' => $data['price'],
+                    'discount_price' => $data['discount_price'],
+                    'image' => $data['image'],
+                    'stock' => $data['stock'],
+                    'status' => 1,
+                ]
+            );
         }
     }
 }
