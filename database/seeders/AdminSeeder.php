@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Database\Seeders;
@@ -5,18 +6,27 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        $email = env('ADMIN_EMAIL');
+        $name = env('ADMIN_NAME');
+        $password = env('ADMIN_PASSWORD');
+
+        if (!$email || !$name || !$password) {
+            throw new RuntimeException(
+                'ADMIN_EMAIL, ADMIN_NAME and ADMIN_PASSWORD must be configured.'
+            );
+        }
+
         User::updateOrCreate(
+            ['email' => $email],
             [
-                'email' => env('ADMIN_EMAIL'),
-            ],
-            [
-                'name' => env('ADMIN_NAME'),
-                'password' => Hash::make(env('ADMIN_PASSWORD')),
+                'name' => $name,
+                'password' => Hash::make($password),
                 'role' => 'admin',
             ]
         );
