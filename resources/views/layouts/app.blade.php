@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,11 +10,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        @yield('title', 'RP Jewellers')
-    </title>
+    <title>@yield('title', 'RP Jewellers')</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap CSS -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
@@ -28,13 +27,13 @@
     <!-- Navbar CSS -->
     <link
         rel="stylesheet"
-        href="{{ asset('css/navbar.css') }}"
+        href="{{ secure_asset('css/navbar.css') }}"
     >
 
     <!-- Footer CSS -->
     <link
         rel="stylesheet"
-        href="{{ asset('css/footer.css') }}"
+        href="{{ secure_asset('css/footer.css') }}"
     >
 
     <!-- Page Specific CSS -->
