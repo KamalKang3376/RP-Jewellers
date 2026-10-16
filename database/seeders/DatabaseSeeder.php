@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Database\Seeders;
@@ -11,6 +12,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }
