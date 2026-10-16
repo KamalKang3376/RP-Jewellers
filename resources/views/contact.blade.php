@@ -3,7 +3,7 @@
 @section('title', 'Contact Us | RP Jewellers')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/contact.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/contact.css') }}">
 @endpush
 
 @section('content')

@@ -3,7 +3,7 @@
 @section('title', 'My Wishlist | RP Jewellers')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/wishlist.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/wishlist.css') }}">
 @endpush
 
 @section('content')

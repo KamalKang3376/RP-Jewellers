@@ -6,7 +6,7 @@
 
     <title>Verify OTP | RP Jewellers</title>
 
-    <link rel="stylesheet" href="{{ asset('css/verify-otp.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/verify-otp.css') }}">
 </head>
 
 <body>

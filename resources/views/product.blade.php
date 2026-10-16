@@ -3,7 +3,7 @@
 @section('title', $product->name . ' | RP Jewellers')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/product.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/product.css') }}">
 @endpush
 
 @section('content')
