@@ -17,6 +17,7 @@ class CategorySeeder extends Seeder
             'Bracelets',
             'Pendants',
             'Bangles',
+            
         ];
 
         foreach ($categories as $name) {
