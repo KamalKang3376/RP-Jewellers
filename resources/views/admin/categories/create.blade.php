@@ -85,7 +85,7 @@
 
 
             <form
-                action="{{ route('admin.categories.store') }}"
+                action="{{ route('admin.categories.store',[],false) }}"
                 method="POST"
                 enctype="multipart/form-data"
             >
