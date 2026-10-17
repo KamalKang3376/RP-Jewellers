@@ -56,11 +56,7 @@
     @endif
 
 
-    <form
-        action="{{ route('admin.products.store') }}"
-        method="POST"
-        enctype="multipart/form-data"
-    >
+    <form action="{{ secure_url(route('admin.products.store', [], false)) }}" method="POST" enctype="multipart/form-data">
 
         @csrf
 
