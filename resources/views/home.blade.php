@@ -115,13 +115,6 @@
 
         </div>
 
-        @foreach($categories as $category)
-    <p>
-        {{ $category->name }} —
-        {{ $category->image ?? 'IMAGE IS EMPTY' }}
-    </p>
-    @endforeach
-
 
         <div class="row g-3">
 
