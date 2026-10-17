@@ -37,7 +37,43 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => 'Anklets',
-                'image' => 'anklets.jpg',
+                'image' => '1791108924_anklets1.jpg',
+            ],
+            [
+                'name' => 'Diamond',
+                'image' => 'diamond.jpg',
+            ],
+            [
+                'name' => 'Polki Jewellery',
+                'image' => 'polkhi-jewellary.jpg',
+            ],
+            [
+                'name' => 'Pearls',
+                'image' => 'pearls.jpg',
+            ],
+            [
+                'name' => 'Wedding Sets',
+                'image' => 'wedding-sets.jpg',
+            ],
+            [
+                'name' => 'Cufflinks',
+                'image' => 'cufflinks.jpg',
+            ],
+            [
+                'name' => 'Toe Rings',
+                'image' => 'rings.jpg',
+            ],
+            [
+                'name' => 'Mangalsutras',
+                'image' => 'necklaces.jpg',
+            ],
+            [
+                'name' => 'Chains',
+                'image' => 'necklaces.jpg',
+            ],
+            [
+                'name' => 'Nose Pins',
+                'image' => 'earrings.jpg',
             ],
         ];
 
