@@ -59,22 +59,7 @@ class CategorySeeder extends Seeder
                 'name' => 'Cufflinks',
                 'image' => 'cufflinks.jpg',
             ],
-            [
-                'name' => 'Toe Rings',
-                'image' => 'rings.jpg',
-            ],
-            [
-                'name' => 'Mangalsutras',
-                'image' => 'necklaces.jpg',
-            ],
-            [
-                'name' => 'Chains',
-                'image' => 'necklaces.jpg',
-            ],
-            [
-                'name' => 'Nose Pins',
-                'image' => 'earrings.jpg',
-            ],
+    
         ];
 
         foreach ($categories as $categoryData) {
