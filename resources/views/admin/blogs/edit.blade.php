@@ -103,28 +103,30 @@
 
         <div class="form-section">
 
-            <h4>Current Image</h4>
+    <h4>Current Image</h4>
 
-            @if($blog->image)
+    @if($blog->image)
 
-                <img
-                    src="{{ asset('images/blog/' . $blog->image) }}"
-                    class="edit-blog-image"
-                    alt="{{ $blog->title }}"
-                >
+        <img
+            src="{{ asset('storage/' . $blog->image) }}"
+            class="edit-blog-image"
+            alt="{{ $blog->title }}"
+        >
 
-            @endif
+    @endif
 
+    <input
+        type="file"
+        name="image"
+        class="form-control mt-3"
+        accept=".jpg,.jpeg,.png,.webp"
+    >
 
-            <input
-                type="file"
-                name="image"
-                class="form-control mt-3"
-                accept="image/*"
-            >
+    <small class="text-muted">
+        Leave empty to keep the current image. Maximum size: 2MB.
+    </small>
 
-        </div>
-
+</div>
 
         <div class="form-section mt-4">
 

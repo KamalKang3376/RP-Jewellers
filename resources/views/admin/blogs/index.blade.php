@@ -156,11 +156,10 @@
                                 <div class="blog-image">
 
                                     @if($blog->image)
-
-                                        <img
-                                            src="{{ asset('images/blogs/' . $blog->image) }}"
-                                            alt="{{ $blog->title }}"
-                                        >
+                                    <img
+                                        src="{{ asset('storage/' . $blog->image) }}"
+                                        alt="{{ $blog->title }}"
+                                    >
 
                                     @else
 
@@ -200,7 +199,7 @@
 
                                 <span class="category-badge">
 
-                                    {{ $blog->category->name ?? 'Uncategorized' }}
+                                    {{ $blog->category ?? 'Uncategorized' }}
 
                                 </span>
 
@@ -216,7 +215,7 @@
                                     </div>
 
                                     <span>
-                                        {{ $blog->author->name ?? 'Admin' }}
+                                        {{ $blog->author ?? 'Admin' }}
                                     </span>
 
                                 </div>

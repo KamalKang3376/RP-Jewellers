@@ -280,10 +280,15 @@
                             Status
                         </label>
 
-                        <select
-                            id="status"
-                            name="status"
-                        >
+                        <select id="status" name="status">
+                            <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>
+                                Published
+                            </option>
+
+                            <option value="0" {{ old('status', '1') == '0' ? 'selected' : '' }}>
+                                Draft
+                            </option>
+                        </select>
 
                             <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>
                                 Published
@@ -329,11 +334,8 @@
 
 
 <script>
-
-document.getElementById('image').addEventListener('change', function(event) {
-
+document.getElementById('image').addEventListener('change', function (event) {
     const file = event.target.files[0];
-
     const preview = document.getElementById('imagePreview');
 
     if (!file) {
@@ -342,18 +344,13 @@ document.getElementById('image').addEventListener('change', function(event) {
 
     const reader = new FileReader();
 
-    reader.onload = function(e) {
-
+    reader.onload = function (e) {
         preview.innerHTML = `
-            <img src="${e.target.result}" alt="Preview">
+            <img src="${e.target.result}" alt="Image Preview">
         `;
-
     };
 
     reader.readAsDataURL(file);
-
 });
-
 </script>
-
 @endsection
