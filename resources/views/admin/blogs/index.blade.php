@@ -4,7 +4,7 @@
 
 @section('content')
 
-<link rel="stylesheet" href="{{ asset('css/admin/blogs.css') }}">
+<link rel="stylesheet" href="{{ secure_asset('css/admin/blogs.css') }}">
 
 <div class="admin-blog-page">
 
