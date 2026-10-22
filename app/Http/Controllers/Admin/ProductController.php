@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -44,17 +45,8 @@ class ProductController extends Controller
         $validated['slug'] = Str::slug($request->name);
 
         if ($request->hasFile('image')) {
-
-            $image = $request->file('image');
-
-            $imageName = time() . '_' . $image->getClientOriginalName();
-
-            $image->move(
-                public_path('images/products'),
-                $imageName
-            );
-
-            $validated['image'] = $imageName;
+            $validated['image'] = $request->file('image')
+                ->store('products', 'public');
         }
 
         Product::create($validated);
@@ -99,28 +91,24 @@ class ProductController extends Controller
         $validated['slug'] = Str::slug($request->name);
 
         if ($request->hasFile('image')) {
+            $newImagePath = $request->file('image')
+                ->store('products', 'public');
 
-            if (
-                $product->image &&
-                file_exists(
-                    public_path('images/products/' . $product->image)
-                )
-            ) {
-                unlink(
-                    public_path('images/products/' . $product->image)
-                );
+            if ($product->image) {
+                if (str_starts_with($product->image, 'products/')) {
+                    Storage::disk('public')->delete($product->image);
+                } else {
+                    $oldImagePath = public_path(
+                        'images/products/' . $product->image
+                    );
+
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
             }
 
-            $image = $request->file('image');
-
-            $imageName = time() . '_' . $image->getClientOriginalName();
-
-            $image->move(
-                public_path('images/products'),
-                $imageName
-            );
-
-            $validated['image'] = $imageName;
+            $validated['image'] = $newImagePath;
         }
 
         $product->update($validated);
@@ -132,15 +120,18 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if (
-            $product->image &&
-            file_exists(
-                public_path('images/products/' . $product->image)
-            )
-        ) {
-            unlink(
-                public_path('images/products/' . $product->image)
-            );
+        if ($product->image) {
+            if (str_starts_with($product->image, 'products/')) {
+                Storage::disk('public')->delete($product->image);
+            } else {
+                $imagePath = public_path(
+                    'images/products/' . $product->image
+                );
+
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
         }
 
         $product->delete();

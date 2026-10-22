@@ -198,21 +198,15 @@
                             <span>*</span>
                         </label>
 
-                        <select
-                            id="status"
-                            name="status"
-                            required
-                        >
-
+                       <select id="status" name="status" required>
                             <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>
                                 Active
                             </option>
 
-                            <option value="0" {{ old('status') === '0' ? 'selected' : '' }}>
+                            <option value="0" {{ old('status', '1') == '0' ? 'selected' : '' }}>
                                 Inactive
                             </option>
-
-                        </select>
+                        </select> 
 
                     </div>
 
@@ -246,27 +240,17 @@
                             <span>*</span>
                         </label>
 
-                        <select
-                            id="category_id"
-                            name="category_id"
-                            required
-                        >
-
-                            <option value="">
-                                Select Category
-                            </option>
+                        <select id="category_id" name="category_id" required>
+                            <option value="">Select Category</option>
 
                             @foreach($categories as $category)
-
                                 <option
                                     value="{{ $category->id }}"
                                     {{ old('category_id') == $category->id ? 'selected' : '' }}
                                 >
                                     {{ $category->name }}
                                 </option>
-
                             @endforeach
-
                         </select>
 
                     </div>
@@ -359,17 +343,18 @@
 @endsection
 
 
+
 @push('scripts')
-
 <script>
-
 document.addEventListener('DOMContentLoaded', function () {
-
     const imageInput = document.getElementById('image');
     const imagePreview = document.getElementById('imagePreview');
 
-    imageInput.addEventListener('change', function () {
+    if (!imageInput || !imagePreview) {
+        return;
+    }
 
+    imageInput.addEventListener('change', function () {
         const file = this.files[0];
 
         if (!file) {
@@ -378,21 +363,24 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        if (!file.type.startsWith('image/')) {
+            imageInput.value = '';
+            imagePreview.innerHTML =
+                '<i class="fa-solid fa-cloud-arrow-up"></i>';
+            alert('Please select a valid image.');
+            return;
+        }
+
         const reader = new FileReader();
 
         reader.onload = function (event) {
-
             imagePreview.innerHTML =
-                '<img src="' + event.target.result + '" alt="Product Preview">';
-
+                '<img src="' + event.target.result +
+                '" alt="Product Preview">';
         };
 
         reader.readAsDataURL(file);
-
     });
-
 });
-
 </script>
-
 @endpush

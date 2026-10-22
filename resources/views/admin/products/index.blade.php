@@ -96,22 +96,25 @@
 
                                 <div class="product-image">
 
-                                    @if($product->image)
+                                  
+                            @if($product->image)
+                                <img
+                                    src="{{ str_starts_with($product->image, 'products/')
+                                        ? asset('storage/' . $product->image)
+                                        : asset('images/products/' . $product->image) }}"
+                                    alt="{{ $product->name }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                >
 
-                                        <img
-                                            src="{{ asset('images/products/' . $product->image) }}"
-                                            alt="{{ $product->name }}"
-                                        >
-
-                                    @else
-
-                                        <div class="no-image">
-
-                                            <i class="fa-regular fa-image"></i>
-
-                                        </div>
-
-                                    @endif
+                                <div class="no-image" style="display: none;">
+                                    <i class="fa-regular fa-image"></i>
+                                </div>
+                            @else
+                                <div class="no-image">
+                                    <i class="fa-regular fa-image"></i>
+                                </div>
+                            @endif
+                            
 
                                 </div>
 
