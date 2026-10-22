@@ -34,7 +34,7 @@ class BlogController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($request->title);
+        $validated['slug'] = Str::slug($validated['title']);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')
@@ -65,18 +65,26 @@ class BlogController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($request->title);
+        $validated['slug'] = Str::slug($validated['title']);
+
+        $oldImage = $blog->image;
 
         if ($request->hasFile('image')) {
-            if ($blog->image) {
-                Storage::disk('public')->delete($blog->image);
-            }
-
-            $validated['image'] = $request->file('image')
+            $newImage = $request->file('image')
                 ->store('blogs', 'public');
+
+            $validated['image'] = $newImage;
         }
 
         $blog->update($validated);
+
+        if (
+            $request->hasFile('image') &&
+            $oldImage &&
+            $oldImage !== $blog->image
+        ) {
+            Storage::disk('public')->delete($oldImage);
+        }
 
         return redirect()
             ->route('admin.blogs.index')
@@ -85,11 +93,13 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog)
     {
-        if ($blog->image) {
-            Storage::disk('public')->delete($blog->image);
-        }
+        $image = $blog->image;
 
         $blog->delete();
+
+        if ($image) {
+            Storage::disk('public')->delete($image);
+        }
 
         return redirect()
             ->route('admin.blogs.index')

@@ -42,7 +42,7 @@ class ProductController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($request->name);
+        $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')
@@ -88,30 +88,23 @@ class ProductController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($request->name);
+        $validated['slug'] = Str::slug($validated['name']);
+
+        $oldImage = $product->image;
+        $newImage = null;
 
         if ($request->hasFile('image')) {
-            $newImagePath = $request->file('image')
+            $newImage = $request->file('image')
                 ->store('products', 'public');
 
-            if ($product->image) {
-                if (str_starts_with($product->image, 'products/')) {
-                    Storage::disk('public')->delete($product->image);
-                } else {
-                    $oldImagePath = public_path(
-                        'images/products/' . $product->image
-                    );
-
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
-                }
-            }
-
-            $validated['image'] = $newImagePath;
+            $validated['image'] = $newImage;
         }
 
         $product->update($validated);
+
+        if ($newImage && $oldImage && $oldImage !== $newImage) {
+            $this->deleteProductImage($oldImage);
+        }
 
         return redirect()
             ->route('admin.products.index')
@@ -120,24 +113,31 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->image) {
-            if (str_starts_with($product->image, 'products/')) {
-                Storage::disk('public')->delete($product->image);
-            } else {
-                $imagePath = public_path(
-                    'images/products/' . $product->image
-                );
-
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
-        }
+        $image = $product->image;
 
         $product->delete();
+
+        if ($image) {
+            $this->deleteProductImage($image);
+        }
 
         return redirect()
             ->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
+    }
+
+    private function deleteProductImage(string $image): void
+    {
+        if (str_starts_with($image, 'products/')) {
+            Storage::disk('public')->delete($image);
+
+            return;
+        }
+
+        $legacyPath = public_path('images/products/' . basename($image));
+
+        if (is_file($legacyPath)) {
+            unlink($legacyPath);
+        }
     }
 }

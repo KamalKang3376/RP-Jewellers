@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Shop | RP Jewellers')
@@ -85,9 +84,10 @@
             </aside>
 
             <main class="shop-products">
+
                 <div class="shop-toolbar">
                     <div class="product-count">
-                        @if($search)
+                        @if(!empty($search))
                             <p>
                                 Search results for
                                 <strong>"{{ $search }}"</strong>
@@ -135,15 +135,22 @@
                 </div>
 
                 @if($products->count() > 0)
+
                     <div class="products-grid">
+
                         @foreach($products as $product)
+
                             <article class="product-card">
+
                                 <div class="product-image-box">
+
                                     <a
                                         href="{{ route('product.show', $product->slug) }}"
                                         class="product-image-link"
                                     >
+
                                         @if($product->image)
+
                                             @php
                                                 $imagePath = str_starts_with($product->image, 'products/')
                                                     ? asset('storage/' . $product->image)
@@ -161,11 +168,15 @@
                                             <div class="image-placeholder" style="display: none;">
                                                 <i class="fa-solid fa-gem"></i>
                                             </div>
+
                                         @else
+
                                             <div class="image-placeholder">
                                                 <i class="fa-solid fa-gem"></i>
                                             </div>
+
                                         @endif
+
                                     </a>
 
                                     @if($product->discount_price)
@@ -198,9 +209,11 @@
                                             <i class="fa-regular fa-heart"></i>
                                         </a>
                                     @endauth
+
                                 </div>
 
                                 <div class="product-details">
+
                                     @if($product->category)
                                         <span class="product-category">
                                             {{ $product->category->name }}
@@ -227,6 +240,7 @@
                                     </div>
 
                                     <div class="product-price">
+
                                         @if($product->discount_price)
                                             <span class="discount-price">
                                                 ₹{{ number_format($product->discount_price) }}
@@ -240,6 +254,7 @@
                                                 ₹{{ number_format($product->price) }}
                                             </span>
                                         @endif
+
                                     </div>
 
                                     <a
@@ -249,11 +264,17 @@
                                         <span>View Product</span>
                                         <i class="fa-solid fa-arrow-right"></i>
                                     </a>
+
                                 </div>
+
                             </article>
+
                         @endforeach
+
                     </div>
+
                 @else
+
                     <div class="empty-products">
                         <div class="empty-icon">
                             <i class="fa-solid fa-gem"></i>
@@ -269,7 +290,9 @@
                             View All Products
                         </a>
                     </div>
+
                 @endif
+
             </main>
 
         </div>
