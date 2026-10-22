@@ -45,3 +45,138 @@
     gap: 10px;
     margin-top: 25px;
 }
+
+.edit-blog-card {
+    overflow: hidden;
+}
+
+.edit-blog-form-wrapper {
+    padding: 28px;
+}
+
+.edit-blog-form-wrapper .form-section {
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e9e5dc;
+    border-radius: 12px;
+}
+
+.edit-blog-form-wrapper .form-section h4 {
+    margin: 0 0 20px;
+    color: #12332e;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.edit-blog-form-wrapper .form-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #263b35;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.edit-blog-form-wrapper .form-control,
+.edit-blog-form-wrapper .form-select {
+    min-height: 45px;
+    border: 1px solid #dcded8;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #263b35;
+    font-size: 14px;
+    box-shadow: none;
+}
+
+.edit-blog-form-wrapper textarea.form-control {
+    min-height: 110px;
+    padding: 13px 14px;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+.edit-blog-form-wrapper .blog-content-field {
+    min-height: 320px;
+}
+
+.edit-blog-form-wrapper .form-control:focus,
+.edit-blog-form-wrapper .form-select:focus {
+    border-color: #c49a55;
+    box-shadow: 0 0 0 3px rgba(196, 154, 85, 0.14);
+}
+
+.edit-blog-image-wrapper {
+    overflow: hidden;
+    border: 1px solid #e9e5dc;
+    border-radius: 10px;
+    background: #fbfaf6;
+}
+
+.edit-blog-form-wrapper .edit-blog-image {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #fbfaf6;
+}
+
+.edit-blog-form-wrapper .no-blog-image {
+    display: flex;
+    min-height: 150px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px dashed #d8d2c5;
+    border-radius: 10px;
+    background: #fbfaf6;
+    color: #8b9189;
+}
+
+.edit-blog-form-wrapper .no-blog-image i {
+    font-size: 30px;
+}
+
+.edit-blog-form-wrapper .text-muted {
+    color: #7b817c !important;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.edit-blog-form-wrapper .admin-btn {
+    min-height: 48px;
+    padding: 12px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #12332e;
+    color: #fff;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.edit-blog-form-wrapper .admin-btn:hover {
+    background: #1b493f;
+}
+
+.edit-blog-form-wrapper .blog-alert {
+    margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+    .edit-blog-form-wrapper {
+        padding: 16px;
+    }
+
+    .edit-blog-form-wrapper .form-section {
+        padding: 18px;
+    }
+
+    .edit-blog-form-wrapper .blog-content-field {
+        min-height: 240px;
+    }
+
+    .blog-page-header {
+        align-items: flex-start;
+        gap: 16px;
+    }
+}

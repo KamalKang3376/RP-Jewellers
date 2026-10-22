@@ -9,12 +9,9 @@
 <div class="admin-blog-page">
 
     <div class="blog-page-header">
-
         <div>
             <span class="page-label">CONTENT MANAGEMENT</span>
-
             <h1>Blog Posts</h1>
-
             <p>Manage your jewellery articles</p>
         </div>
 
@@ -22,128 +19,89 @@
             <i class="fa-solid fa-plus"></i>
             Add Blog
         </a>
-
     </div>
 
-
     @if(session('success'))
-
         <div class="blog-alert success">
             <i class="fa-solid fa-circle-check"></i>
             {{ session('success') }}
         </div>
-
     @endif
 
-
     @if(session('error'))
-
         <div class="blog-alert error">
             <i class="fa-solid fa-circle-exclamation"></i>
             {{ session('error') }}
         </div>
-
     @endif
-
 
     <div class="blog-stats">
 
         <div class="blog-stat-card">
-
             <div class="stat-icon">
                 <i class="fa-solid fa-newspaper"></i>
             </div>
-
             <div>
                 <span>Total Posts</span>
                 <strong>{{ $blogs->count() }}</strong>
             </div>
-
         </div>
 
-
         <div class="blog-stat-card">
-
             <div class="stat-icon published">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-
             <div>
                 <span>Published</span>
-                <strong>
-                    {{ $blogs->where('status', 1)->count() }}
-                </strong>
+                <strong>{{ $blogs->where('status', 1)->count() }}</strong>
             </div>
-
         </div>
 
-
         <div class="blog-stat-card">
-
             <div class="stat-icon draft">
                 <i class="fa-solid fa-file"></i>
             </div>
-
             <div>
                 <span>Drafts</span>
-                <strong>
-                    {{ $blogs->where('status', 0)->count() }}
-                </strong>
+                <strong>{{ $blogs->where('status', 0)->count() }}</strong>
             </div>
-
         </div>
 
     </div>
 
-
     <div class="blog-card">
 
         <div class="blog-card-header">
-
             <div>
                 <h2>All Blog Posts</h2>
                 <p>View and manage your jewellery articles</p>
             </div>
 
             <div class="blog-search">
-
                 <i class="fa-solid fa-magnifying-glass"></i>
-
                 <input
                     type="text"
                     id="blogSearch"
                     placeholder="Search blogs..."
+                    autocomplete="off"
                 >
-
             </div>
-
         </div>
-
 
         <div class="blog-table-wrapper">
 
             <table class="blog-table">
 
                 <thead>
-
                     <tr>
-
                         <th>Image</th>
-
                         <th>Title</th>
-
                         <th>Category</th>
-
                         <th>Author</th>
-
                         <th>Status</th>
-
                         <th>Action</th>
-
                     </tr>
-
                 </thead>
-
 
                 <tbody id="blogTableBody">
 
@@ -152,14 +110,35 @@
                         <tr>
 
                             <td>
-
                                 <div class="blog-image">
 
                                     @if($blog->image)
-                                    <img
-                                        src="{{ asset('storage/' . $blog->image) }}"
-                                        alt="{{ $blog->title }}"
-                                    >
+
+                                        @php
+                                            $imagePath = $blog->image;
+
+                                            if (str_starts_with($imagePath, 'blogs/')) {
+                                                $imageUrl = asset('storage/' . $imagePath);
+                                            } elseif (str_starts_with($imagePath, 'http://') || str_starts_with($imagePath, 'https://')) {
+                                                $imageUrl = $imagePath;
+                                            } else {
+                                                $imageUrl = asset('images/blog/' . basename($imagePath));
+                                            }
+                                        @endphp
+
+                                        <img
+                                            src="{{ $imageUrl }}"
+                                            alt="{{ $blog->title }}"
+                                            loading="lazy"
+                                            onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                        >
+
+                                        <div
+                                            class="no-blog-image"
+                                            style="display: none;"
+                                        >
+                                            <i class="fa-solid fa-image"></i>
+                                        </div>
 
                                     @else
 
@@ -170,82 +149,48 @@
                                     @endif
 
                                 </div>
-
                             </td>
 
-
                             <td>
-
                                 <div class="blog-title">
-
-                                    <strong>
-                                        {{ $blog->title }}
-                                    </strong>
+                                    <strong>{{ $blog->title }}</strong>
 
                                     @if($blog->slug)
-
-                                        <span>
-                                            /{{ $blog->slug }}
-                                        </span>
-
+                                        <span>/{{ $blog->slug }}</span>
                                     @endif
-
                                 </div>
-
                             </td>
 
-
                             <td>
-
                                 <span class="category-badge">
-
                                     {{ $blog->category ?? 'Uncategorized' }}
-
                                 </span>
-
                             </td>
 
-
                             <td>
-
                                 <div class="author">
-
                                     <div class="author-avatar">
                                         <i class="fa-solid fa-user"></i>
                                     </div>
-
-                                    <span>
-                                        {{ $blog->author ?? 'Admin' }}
-                                    </span>
-
+                                    <span>{{ $blog->author ?? 'Admin' }}</span>
                                 </div>
-
                             </td>
 
-
                             <td>
-
                                 @if($blog->status)
-
                                     <span class="status-badge active">
                                         <span></span>
                                         Published
                                     </span>
-
                                 @else
-
                                     <span class="status-badge inactive">
                                         <span></span>
                                         Draft
                                     </span>
-
                                 @endif
-
                             </td>
 
-
                             <td>
-
                                 <div class="action-buttons">
 
                                     <a
@@ -256,15 +201,12 @@
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
 
-
                                     <form
                                         action="{{ route('admin.blogs.destroy', $blog->id) }}"
                                         method="POST"
                                         onsubmit="return confirm('Are you sure you want to delete this blog?')"
                                     >
-
                                         @csrf
-
                                         @method('DELETE')
 
                                         <button
@@ -274,11 +216,9 @@
                                         >
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
-
                                     </form>
 
                                 </div>
-
                             </td>
 
                         </tr>
@@ -286,9 +226,7 @@
                     @empty
 
                         <tr class="empty-row">
-
                             <td colspan="6">
-
                                 <div class="empty-blog">
 
                                     <div class="empty-icon">
@@ -297,9 +235,7 @@
 
                                     <h3>No Blog Posts Found</h3>
 
-                                    <p>
-                                        You haven't created any blog posts yet.
-                                    </p>
+                                    <p>You haven't created any blog posts yet.</p>
 
                                     <a
                                         href="{{ route('admin.blogs.create') }}"
@@ -310,12 +246,22 @@
                                     </a>
 
                                 </div>
-
                             </td>
-
                         </tr>
 
                     @endforelse
+
+                    <tr id="noSearchResults" style="display: none;">
+                        <td colspan="6">
+                            <div class="empty-blog">
+                                <div class="empty-icon">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <h3>No Matching Blogs</h3>
+                                <p>Try searching with a different keyword.</p>
+                            </div>
+                        </td>
+                    </tr>
 
                 </tbody>
 
@@ -327,31 +273,39 @@
 
 </div>
 
-
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('blogSearch');
+    const tableBody = document.getElementById('blogTableBody');
+    const noResults = document.getElementById('noSearchResults');
 
-document.getElementById('blogSearch').addEventListener('keyup', function() {
+    if (!searchInput || !tableBody || !noResults) {
+        return;
+    }
 
-    const searchValue = this.value.toLowerCase();
+    searchInput.addEventListener('input', function () {
+        const searchValue = this.value.trim().toLowerCase();
 
-    const rows = document.querySelectorAll(
-        '#blogTableBody tr:not(.empty-row)'
-    );
+        const rows = tableBody.querySelectorAll(
+            'tr:not(.empty-row):not(#noSearchResults)'
+        );
 
-    rows.forEach(function(row) {
+        let visibleCount = 0;
 
-        const text = row.textContent.toLowerCase();
+        rows.forEach(function (row) {
+            const matches = row.textContent.toLowerCase().includes(searchValue);
 
-        if (text.includes(searchValue)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+            row.style.display = matches ? '' : 'none';
 
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        noResults.style.display =
+            rows.length > 0 && visibleCount === 0 ? '' : 'none';
     });
-
 });
-
 </script>
 
 @endsection
