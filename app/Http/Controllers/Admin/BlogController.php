@@ -7,7 +7,6 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
 class BlogController extends Controller
 {
     public function index()
