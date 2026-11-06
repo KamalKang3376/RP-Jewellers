@@ -14,22 +14,16 @@
 
         <div>
             <span class="page-label">STORE MANAGEMENT</span>
-
             <h1>Products</h1>
-
             <p>Manage your jewellery products</p>
         </div>
 
-        <a
-            href="{{ route('admin.products.create') }}"
-            class="add-product-btn"
-        >
+        <a href="{{ route('admin.products.create') }}" class="add-product-btn">
             <i class="fa-solid fa-plus"></i>
             Add Product
         </a>
 
     </div>
-
 
     <div class="products-card">
 
@@ -37,15 +31,10 @@
 
             <div>
                 <h3>All Products</h3>
-
-                <span>
-                    {{ $products->count() }} products
-                </span>
+                <span>{{ $products->count() }} products</span>
             </div>
 
-
             <div class="product-search">
-
                 <i class="fa-solid fa-magnifying-glass"></i>
 
                 <input
@@ -53,36 +42,24 @@
                     id="productSearch"
                     placeholder="Search products..."
                 >
-
             </div>
 
         </div>
-
 
         <div class="table-wrapper">
 
             <table class="products-table">
 
                 <thead>
-
                     <tr>
-
                         <th>Product</th>
-
                         <th>Category</th>
-
                         <th>Price</th>
-
                         <th>Stock</th>
-
                         <th>Status</th>
-
                         <th>Actions</th>
-
                     </tr>
-
                 </thead>
-
 
                 <tbody id="productsTable">
 
@@ -96,34 +73,46 @@
 
                                 <div class="product-image">
 
-                                  
-                            @if($product->image)
-                                <img
-                                    src="{{ str_starts_with($product->image, 'products/')
-                                        ? asset('storage/' . $product->image)
-                                        : asset('images/products/' . $product->image) }}"
-                                    alt="{{ $product->name }}"
-                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                >
+                                    @php
+                                        $image = $product->image;
 
-                                <div class="no-image" style="display: none;">
-                                    <i class="fa-regular fa-image"></i>
-                                </div>
-                            @else
-                                <div class="no-image">
-                                    <i class="fa-regular fa-image"></i>
-                                </div>
-                            @endif
-                            
+                                        if ($image && filter_var($image, FILTER_VALIDATE_URL)) {
+                                            $imageUrl = $image;
+                                        } elseif ($image && str_starts_with($image, 'products/')) {
+                                            $imageUrl = asset('storage/' . $image);
+                                        } elseif ($image) {
+                                            $imageUrl = asset('images/products/' . basename($image));
+                                        } else {
+                                            $imageUrl = null;
+                                        }
+                                    @endphp
+
+                                    @if($imageUrl)
+
+                                        <img
+                                            src="{{ $imageUrl }}"
+                                            alt="{{ $product->name }}"
+                                            loading="lazy"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                        >
+
+                                        <div class="no-image" style="display: none;">
+                                            <i class="fa-regular fa-image"></i>
+                                        </div>
+
+                                    @else
+
+                                        <div class="no-image">
+                                            <i class="fa-regular fa-image"></i>
+                                        </div>
+
+                                    @endif
 
                                 </div>
-
 
                                 <div class="product-details">
 
-                                    <h4>
-                                        {{ $product->name }}
-                                    </h4>
+                                    <h4>{{ $product->name }}</h4>
 
                                     <span>
                                         Product #{{ $product->id }}
@@ -135,17 +124,11 @@
 
                         </td>
 
-
                         <td>
-
                             <span class="category-name">
-
                                 {{ $product->category->name ?? 'Uncategorized' }}
-
                             </span>
-
                         </td>
-
 
                         <td>
 
@@ -173,7 +156,6 @@
 
                         </td>
 
-
                         <td>
 
                             @if($product->stock > 10)
@@ -198,33 +180,25 @@
 
                         </td>
 
-
                         <td>
 
                             @if($product->status)
 
                                 <span class="status-badge status-active">
-
                                     <span></span>
-
                                     Active
-
                                 </span>
 
                             @else
 
                                 <span class="status-badge status-inactive">
-
                                     <span></span>
-
                                     Inactive
-
                                 </span>
 
                             @endif
 
                         </td>
-
 
                         <td>
 
@@ -235,11 +209,8 @@
                                     class="action-btn edit-btn"
                                     title="Edit Product"
                                 >
-
                                     <i class="fa-solid fa-pen"></i>
-
                                 </a>
-
 
                                 <a
                                     href="{{ route('product.show', $product->slug) }}"
@@ -247,11 +218,8 @@
                                     title="View Product"
                                     target="_blank"
                                 >
-
                                     <i class="fa-solid fa-eye"></i>
-
                                 </a>
-
 
                                 <form
                                     action="{{ route('admin.products.destroy', $product->id) }}"
@@ -260,7 +228,6 @@
                                 >
 
                                     @csrf
-
                                     @method('DELETE')
 
                                     <button
@@ -268,9 +235,7 @@
                                         class="action-btn delete-btn"
                                         title="Delete Product"
                                     >
-
                                         <i class="fa-solid fa-trash"></i>
-
                                     </button>
 
                                 </form>
@@ -290,30 +255,18 @@
                             <div class="empty-products">
 
                                 <div class="empty-icon">
-
                                     <i class="fa-regular fa-gem"></i>
-
                                 </div>
 
-
-                                <h3>
-                                    No Products Found
-                                </h3>
-
+                                <h3>No Products Found</h3>
 
                                 <p>
                                     Start adding jewellery products to your store.
                                 </p>
 
-
-                                <a
-                                    href="{{ route('admin.products.create') }}"
-                                >
-
+                                <a href="{{ route('admin.products.create') }}">
                                     <i class="fa-solid fa-plus"></i>
-
                                     Add Your First Product
-
                                 </a>
 
                             </div>
@@ -336,17 +289,13 @@
 
 @endsection
 
-
 @push('scripts')
 
 <script>
-
 document.addEventListener('DOMContentLoaded', function () {
 
     const searchInput = document.getElementById('productSearch');
-
     const rows = document.querySelectorAll('#productsTable tr');
-
 
     if (searchInput) {
 
@@ -354,20 +303,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const searchValue = this.value.toLowerCase().trim();
 
-
             rows.forEach(function (row) {
 
                 const rowText = row.textContent.toLowerCase();
 
-                if (rowText.includes(searchValue)) {
-
-                    row.style.display = '';
-
-                } else {
-
-                    row.style.display = 'none';
-
-                }
+                row.style.display = rowText.includes(searchValue) ? '' : 'none';
 
             });
 
@@ -376,7 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 });
-
 </script>
 
 @endpush
