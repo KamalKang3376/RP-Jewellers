@@ -50,7 +50,10 @@ class ProductController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        // Generate a unique slug before uploading the image.
+        $validated['slug'] = $this->generateUniqueSlug(
+            $validated['name']
+        );
 
         if ($request->hasFile('image')) {
             $uploadedImage = $this->cloudinary->upload(
@@ -101,7 +104,11 @@ class ProductController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+        // Generate a unique slug while excluding the current product.
+        $validated['slug'] = $this->generateUniqueSlug(
+            $validated['name'],
+            $product->id
+        );
 
         $oldImage = $product->image;
         $oldPublicId = $product->cloudinary_public_id;
@@ -118,6 +125,7 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        // Delete the previous image only after the product is updated.
         if ($request->hasFile('image')) {
             $this->deleteProductImage($oldImage, $oldPublicId);
         }
@@ -141,6 +149,35 @@ class ProductController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 
+    /**
+     * Generate a unique product slug.
+     */
+    private function generateUniqueSlug(
+        string $name,
+        ?int $excludeProductId = null
+    ): string {
+        $baseSlug = Str::slug($name);
+        $slug = $baseSlug;
+        $counter = 2;
+
+        while (
+            Product::where('slug', $slug)
+                ->when(
+                    $excludeProductId,
+                    fn ($query) => $query->where('id', '!=', $excludeProductId)
+                )
+                ->exists()
+        ) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Delete an old product image from Cloudinary or local storage.
+     */
     private function deleteProductImage(
         ?string $image,
         ?string $publicId
