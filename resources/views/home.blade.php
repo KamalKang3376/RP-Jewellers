@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Home | RP Jewellers')
@@ -96,10 +95,27 @@
 
                             @if($category->image)
 
+                                @php
+                                    $categoryImage = $category->image;
+
+                                    if (filter_var($categoryImage, FILTER_VALIDATE_URL)) {
+                                        $categoryImageUrl = $categoryImage;
+                                    } elseif (str_starts_with($categoryImage, 'categories/')) {
+                                        $categoryImageUrl = asset('storage/' . $categoryImage);
+                                    } else {
+                                        $categoryImageUrl = asset('images/categories/' . basename($categoryImage));
+                                    }
+                                @endphp
+
                                 <img
-                                    src="{{ asset('images/categories/' . $category->image) }}"
+                                    src="{{ $categoryImageUrl }}"
                                     alt="{{ $category->name }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                 >
+
+                                <div class="category-placeholder" style="display:none;">
+                                    <i class="fa-solid fa-gem"></i>
+                                </div>
 
                             @else
 
@@ -181,27 +197,24 @@
                                     @php
                                         $image = $product->image;
 
-                                        if (str_starts_with($image, 'products/')) {
-                                            if (file_exists(storage_path('app/public/' . $image))) {
-                                                $imageUrl = asset('storage/' . $image);
-                                            } elseif (file_exists(public_path('images/' . $image))) {
-                                                $imageUrl = asset('images/' . $image);
-                                            } else {
-                                                $imageUrl = asset('images/no-image.png');
-                                            }
+                                        if (filter_var($image, FILTER_VALIDATE_URL)) {
+                                            $imageUrl = $image;
+                                        } elseif (str_starts_with($image, 'products/')) {
+                                            $imageUrl = asset('storage/' . $image);
                                         } else {
-                                            if (file_exists(public_path('images/products/' . basename($image)))) {
-                                                $imageUrl = asset('images/products/' . basename($image));
-                                            } else {
-                                                $imageUrl = asset('images/no-image.png');
-                                            }
+                                            $imageUrl = asset('images/products/' . basename($image));
                                         }
                                     @endphp
 
                                     <img
                                         src="{{ $imageUrl }}"
                                         alt="{{ $product->name }}"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                     >
+
+                                    <div class="product-placeholder" style="display:none;">
+                                        <i class="fa-solid fa-gem"></i>
+                                    </div>
 
                                 @else
 
