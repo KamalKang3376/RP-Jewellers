@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Blog | RP Jewellers')
@@ -41,8 +40,20 @@
 
                                 <div class="featured-image">
                                     @if($featuredPost->image)
+                                        @php
+                                            $featuredImage = $featuredPost->image;
+
+                                            if (filter_var($featuredImage, FILTER_VALIDATE_URL)) {
+                                                $featuredImageUrl = $featuredImage;
+                                            } elseif (str_starts_with($featuredImage, 'blogs/')) {
+                                                $featuredImageUrl = asset('storage/' . $featuredImage);
+                                            } else {
+                                                $featuredImageUrl = asset('storage/' . ltrim($featuredImage, '/'));
+                                            }
+                                        @endphp
+
                                         <img
-                                            src="{{ asset('storage/' . ltrim($featuredPost->image, '/')) }}"
+                                            src="{{ $featuredImageUrl }}"
                                             alt="{{ $featuredPost->title }}"
                                             onerror="this.onerror=null; this.style.display='none';"
                                         >
@@ -89,8 +100,20 @@
 
                                 <div class="blog-image">
                                     @if($blog->image)
+                                        @php
+                                            $blogImage = $blog->image;
+
+                                            if (filter_var($blogImage, FILTER_VALIDATE_URL)) {
+                                                $blogImageUrl = $blogImage;
+                                            } elseif (str_starts_with($blogImage, 'blogs/')) {
+                                                $blogImageUrl = asset('storage/' . $blogImage);
+                                            } else {
+                                                $blogImageUrl = asset('storage/' . ltrim($blogImage, '/'));
+                                            }
+                                        @endphp
+
                                         <img
-                                            src="{{ asset('storage/' . ltrim($blog->image, '/')) }}"
+                                            src="{{ $blogImageUrl }}"
                                             alt="{{ $blog->title }}"
                                             onerror="this.onerror=null; this.style.display='none';"
                                         >
@@ -191,8 +214,20 @@
                                     class="recent-post"
                                 >
                                     @if($post->image)
+                                        @php
+                                            $recentImage = $post->image;
+
+                                            if (filter_var($recentImage, FILTER_VALIDATE_URL)) {
+                                                $recentImageUrl = $recentImage;
+                                            } elseif (str_starts_with($recentImage, 'blogs/')) {
+                                                $recentImageUrl = asset('storage/' . $recentImage);
+                                            } else {
+                                                $recentImageUrl = asset('storage/' . ltrim($recentImage, '/'));
+                                            }
+                                        @endphp
+
                                         <img
-                                            src="{{ asset('storage/' . ltrim($post->image, '/')) }}"
+                                            src="{{ $recentImageUrl }}"
                                             alt="{{ $post->title }}"
                                             onerror="this.onerror=null; this.style.display='none';"
                                         >
