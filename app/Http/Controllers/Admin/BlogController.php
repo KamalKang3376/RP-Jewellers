@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
 class BlogController extends Controller
 {
+    protected CloudinaryService $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     public function index()
     {
         $blogs = Blog::latest()->get();
@@ -36,8 +44,13 @@ class BlogController extends Controller
         $validated['slug'] = Str::slug($validated['title']);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
-                ->store('blogs', 'public');
+            $uploadedImage = $this->cloudinary->upload(
+                $request->file('image'),
+                'rp-jewellers/blogs'
+            );
+
+            $validated['image'] = $uploadedImage['url'];
+            $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
         }
 
         Blog::create($validated);
@@ -67,22 +80,22 @@ class BlogController extends Controller
         $validated['slug'] = Str::slug($validated['title']);
 
         $oldImage = $blog->image;
+        $oldPublicId = $blog->cloudinary_public_id;
 
         if ($request->hasFile('image')) {
-            $newImage = $request->file('image')
-                ->store('blogs', 'public');
+            $uploadedImage = $this->cloudinary->upload(
+                $request->file('image'),
+                'rp-jewellers/blogs'
+            );
 
-            $validated['image'] = $newImage;
+            $validated['image'] = $uploadedImage['url'];
+            $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
         }
 
         $blog->update($validated);
 
-        if (
-            $request->hasFile('image') &&
-            $oldImage &&
-            $oldImage !== $blog->image
-        ) {
-            Storage::disk('public')->delete($oldImage);
+        if ($request->hasFile('image')) {
+            $this->deleteBlogImage($oldImage, $oldPublicId);
         }
 
         return redirect()
@@ -93,15 +106,29 @@ class BlogController extends Controller
     public function destroy(Blog $blog)
     {
         $image = $blog->image;
+        $publicId = $blog->cloudinary_public_id;
 
         $blog->delete();
 
-        if ($image) {
-            Storage::disk('public')->delete($image);
-        }
+        $this->deleteBlogImage($image, $publicId);
 
         return redirect()
             ->route('admin.blogs.index')
             ->with('success', 'Blog deleted successfully.');
+    }
+
+    private function deleteBlogImage(
+        ?string $image,
+        ?string $publicId
+    ): void {
+        if ($publicId) {
+            $this->cloudinary->delete($publicId);
+
+            return;
+        }
+
+        if ($image && str_starts_with($image, 'blogs/')) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($image);
+        }
     }
 }

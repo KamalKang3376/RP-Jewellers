@@ -152,9 +152,15 @@
                                         @if($product->image)
 
                                             @php
-                                                $imagePath = str_starts_with($product->image, 'products/')
-                                                    ? asset('storage/' . $product->image)
-                                                    : asset('images/products/' . $product->image);
+                                                $image = $product->image;
+
+                                                if (filter_var($image, FILTER_VALIDATE_URL)) {
+                                                    $imagePath = $image;
+                                                } elseif (str_starts_with($image, 'products/')) {
+                                                    $imagePath = asset('storage/' . $image);
+                                                } else {
+                                                    $imagePath = asset('images/products/' . basename($image));
+                                                }
                                             @endphp
 
                                             <img

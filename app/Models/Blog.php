@@ -13,6 +13,7 @@ class Blog extends Model
         'excerpt',
         'content',
         'image',
+        'cloudinary_public_id',
         'author',
         'status',
         'views',

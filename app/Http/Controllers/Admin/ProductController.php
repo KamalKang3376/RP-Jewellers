@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected CloudinaryService $cloudinary;
+
+    public function __construct(CloudinaryService $cloudinary)
+    {
+        $this->cloudinary = $cloudinary;
+    }
+
     public function index()
     {
         $products = Product::with('category')
@@ -45,8 +53,13 @@ class ProductController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
-                ->store('products', 'public');
+            $uploadedImage = $this->cloudinary->upload(
+                $request->file('image'),
+                'rp-jewellers/products'
+            );
+
+            $validated['image'] = $uploadedImage['url'];
+            $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
         }
 
         Product::create($validated);
@@ -91,19 +104,22 @@ class ProductController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         $oldImage = $product->image;
-        $newImage = null;
+        $oldPublicId = $product->cloudinary_public_id;
 
         if ($request->hasFile('image')) {
-            $newImage = $request->file('image')
-                ->store('products', 'public');
+            $uploadedImage = $this->cloudinary->upload(
+                $request->file('image'),
+                'rp-jewellers/products'
+            );
 
-            $validated['image'] = $newImage;
+            $validated['image'] = $uploadedImage['url'];
+            $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
         }
 
         $product->update($validated);
 
-        if ($newImage && $oldImage && $oldImage !== $newImage) {
-            $this->deleteProductImage($oldImage);
+        if ($request->hasFile('image')) {
+            $this->deleteProductImage($oldImage, $oldPublicId);
         }
 
         return redirect()
@@ -114,30 +130,29 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $image = $product->image;
+        $publicId = $product->cloudinary_public_id;
 
         $product->delete();
 
-        if ($image) {
-            $this->deleteProductImage($image);
-        }
+        $this->deleteProductImage($image, $publicId);
 
         return redirect()
             ->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
     }
 
-    private function deleteProductImage(string $image): void
-    {
-        if (str_starts_with($image, 'products/')) {
-            Storage::disk('public')->delete($image);
+    private function deleteProductImage(
+        ?string $image,
+        ?string $publicId
+    ): void {
+        if ($publicId) {
+            $this->cloudinary->delete($publicId);
 
             return;
         }
 
-        $legacyPath = public_path('images/products/' . basename($image));
-
-        if (is_file($legacyPath)) {
-            unlink($legacyPath);
+        if ($image && str_starts_with($image, 'products/')) {
+            Storage::disk('public')->delete($image);
         }
     }
 }

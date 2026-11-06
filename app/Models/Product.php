@@ -17,6 +17,7 @@ class Product extends Model
         'price',
         'discount_price',
         'image',
+        'cloudinary_public_id',
         'stock',
         'status',
     ];
