@@ -72,4 +72,5 @@ RUN php artisan storage:link || true
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+
+CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --class=AdminSeeder --force && apache2-foreground"]
