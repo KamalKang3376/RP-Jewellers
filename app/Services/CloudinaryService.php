@@ -11,7 +11,13 @@ class CloudinaryService
 
     public function __construct()
     {
-        $this->cloudinary = new Cloudinary();
+        $this->cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => config('services.cloudinary.cloud_name'),
+                'api_key' => config('services.cloudinary.api_key'),
+                'api_secret' => config('services.cloudinary.api_secret'),
+            ],
+        ]);
     }
 
     public function upload(UploadedFile $file, string $folder): array

@@ -13,6 +13,7 @@ class Category extends Model
         'name',
         'slug',
         'image',
+        'cloudinary_public_id',
         'description',
         'status',
     ];

@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Throwable;
 
 class CategoryController extends Controller
 {
+    public function __construct(
+        private CloudinaryService $cloudinary
+    ) {}
+
     public function index()
     {
         $categories = Category::withCount('products')
@@ -35,28 +42,21 @@ class CategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
+            try {
+                $uploadedImage = $this->cloudinary->upload(
+                    $request->file('image'),
+                    'rp-jewellers/categories'
+                );
 
-            $imageName = time() . '_' . Str::slug(
-                pathinfo(
-                    $image->getClientOriginalName(),
-                    PATHINFO_FILENAME
-                )
-            ) . '.' . $image->getClientOriginalExtension();
+                $validated['image'] = $uploadedImage['url'];
+                $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
+            } catch (Throwable $e) {
+                Log::error('Category image upload failed: ' . $e->getMessage());
 
-            $path = $image->storeAs(
-                'categories',
-                $imageName,
-                'public'
-            );
-
-            if (!$path) {
                 return back()
                     ->withInput()
                     ->with('error', 'Unable to upload category image. Please try again.');
             }
-
-            $validated['image'] = $imageName;
         }
 
         Category::create($validated);
@@ -96,35 +96,28 @@ class CategoryController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
+            try {
+                $uploadedImage = $this->cloudinary->upload(
+                    $request->file('image'),
+                    'rp-jewellers/categories'
+                );
+            } catch (Throwable $e) {
+                Log::error('Category image upload failed: ' . $e->getMessage());
 
-            $imageName = time() . '_' . Str::slug(
-                pathinfo(
-                    $image->getClientOriginalName(),
-                    PATHINFO_FILENAME
-                )
-            ) . '.' . $image->getClientOriginalExtension();
-
-            $path = $image->storeAs(
-                'categories',
-                $imageName,
-                'public'
-            );
-
-            if (!$path) {
                 return back()
                     ->withInput()
                     ->with('error', 'Unable to upload category image. Please try again.');
             }
 
             $oldImage = $category->image;
-            $validated['image'] = $imageName;
+            $oldPublicId = $category->cloudinary_public_id;
+
+            $validated['image'] = $uploadedImage['url'];
+            $validated['cloudinary_public_id'] = $uploadedImage['public_id'];
 
             $category->update($validated);
 
-            if ($oldImage) {
-                Storage::disk('public')->delete('categories/' . $oldImage);
-            }
+            $this->deletePreviousImage($oldPublicId, $oldImage);
 
             return redirect()
                 ->route('admin.categories.index')
@@ -146,16 +139,30 @@ class CategoryController extends Controller
                 ->with('error', 'This category cannot be deleted because it has products.');
         }
 
-        if ($category->image) {
-            Storage::disk('public')->delete(
-                'categories/' . $category->image
-            );
-        }
+        $this->deletePreviousImage(
+            $category->cloudinary_public_id,
+            $category->image
+        );
 
         $category->delete();
 
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Category deleted successfully.');
+    }
+
+    private function deletePreviousImage(
+        ?string $publicId,
+        ?string $image
+    ): void {
+        try {
+            if ($publicId) {
+                $this->cloudinary->delete($publicId);
+            } elseif ($image && !filter_var($image, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete('categories/' . $image);
+            }
+        } catch (Throwable $e) {
+            Log::warning('Unable to delete previous category image: ' . $e->getMessage());
+        }
     }
 }

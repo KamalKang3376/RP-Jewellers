@@ -62,21 +62,37 @@
 
                             <div class="collection-image">
 
-                                @if($category->image)
+                              @if($category->image)
 
-                                    <img
-                                        src="{{ asset('images/categories/' . $category->image) }}"
-                                        alt="{{ $category->name }}"
-                                    >
+                                @php
+                                    $categoryImage = $category->image;
 
-                                @else
+                                    if (filter_var($categoryImage, FILTER_VALIDATE_URL)) {
+                                        $categoryImageUrl = $categoryImage;
+                                    } elseif (str_starts_with($categoryImage, 'categories/')) {
+                                        $categoryImageUrl = asset('storage/' . $categoryImage);
+                                    } else {
+                                        $categoryImageUrl = asset('images/categories/' . basename($categoryImage));
+                                    }
+                                @endphp
 
-                                    <div class="collection-placeholder">
-                                        <i class="fa-solid fa-gem"></i>
-                                    </div>
+                                <img
+                                    src="{{ $categoryImageUrl }}"
+                                    alt="{{ $category->name }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                >
 
-                                @endif
+                                <div class="collection-placeholder" style="display:none;">
+                                    <i class="fa-solid fa-gem"></i>
+                                </div>
 
+                            @else
+
+                                <div class="collection-placeholder">
+                                    <i class="fa-solid fa-gem"></i>
+                                </div>
+
+                            @endif
 
                                 <div class="collection-overlay">
 
